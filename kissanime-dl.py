@@ -2,7 +2,6 @@
 
 import re, os, sys, cfscrape, argparse
 from bs4 import BeautifulSoup as bs
-from time import time, sleep
 from base64 import b64decode
 from urllib.request import urlopen, URLopener
 from urllib.parse import urlparse

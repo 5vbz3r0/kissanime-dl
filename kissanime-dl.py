@@ -1,6 +1,7 @@
 # /*$vbZ3r0*/ #
 
-import re, os, sys, cfscrape, argparse
+import re, os, sys, cfscrape, argparse, time
+from time import time
 from bs4 import BeautifulSoup as bs
 from base64 import b64decode
 from urllib.request import urlopen, URLopener
@@ -66,18 +67,31 @@ def download_episode(url, title, folder, quality):
 		filename = file
 
 def dlProgress(count, blockSize, totalSize):
+	try:
+		time_history.append(time.monotonic())
+	except:
+		time_history = []
 	percent = count*blockSize*100/totalSize
-	if totalSize-count*blockSize<=40000:
+	if totalSize-count*blockSize <= 40000:
 		percent = 100
+	if count > 0:
+		_count = 10 if count > 10 else count
+		speed = blockSize*_count / sum(time_history[-_count])
+	else: speed = 0
 	n = int(percent//4)
-	dl, dls = unitsize(count*blockSize)
-	tdl, tdls = unitsize(totalSize)
+	dl, dlu = unitsize(count*blockSize)
+	tdl, tdlu = unitsize(totalSize)
+	speed, speedu = unitsize(speed, True)
+	try:
+		eta = format_time((totalSize-blockSize*(count+1))//speed)
+	except:
+		eta = '>1 day'
 	l = len(tdl)-len(dl)
-	sys.stdout.write("\r" + "   {:.2f}".format(percent) + "% |" + "#"*n + " "*(25-n) + "| " + " "*(l+1) + dl  + "/" + tdl)
+	sys.stdout.write("\r" + "   {:.2f}".format(percent) + "% |" + "#"*n + " "*(25-n) + "| " + " "*(l+1) + dl + dlu  + "/" + tdl + tdlu)
 	sys.stdout.flush()
 
-def unitsize(size):
-	B = 'B'
+def unitsize(size, speed=False):
+	B = 'B' if not speed else 'B/s'
 	unit = ''
 	if size<1024:
 		unit = B + ' '
@@ -90,7 +104,29 @@ def unitsize(size):
 	else:
 		size /= 1024.0**3
 		unit = 'G' + B
-	return ("{:.2f}".format(size), unit)
+	if speed: t = "{:4}".format(int(size))+'.'+"{:02}".format(int((size%1)*100))
+	else: t = "{:.2f}".format(size)
+	return t, unit
+
+def format_time(t):
+	sec = t = int(t)
+	mn, hr = 0, 0
+	if t>=60:
+		sec=int(t%60)
+		if sec<0: sec=0
+		t //= 60
+	else: return ("{:2}".format(hr)+":"+"{:02}".format(mn)+":"+"{:02}".format(sec))
+	mn = t
+	if t>=60:
+		mn=int(t%60)
+		t //= 60
+	else: return ("{:2}".format(hr)+":"+"{:02}".format(mn)+":"+"{:02}".format(sec))
+	hr = t
+	if t>=24:
+		hr=int(t%24)
+		t //= 24
+	else: return ("{:2}".format(hr)+":"+"{:02}".format(mn)+":"+"{:02}".format(sec))
+	return '>1 day  '
 
 def get_anime_name(download_location, anime_name):
 	url = "https://kissanime.to/Anime/"
@@ -117,6 +153,7 @@ def get_arguments():
 				elif '-' in values:
 					start, end = [i for i in map(int, values.split('-'))]
 					values = [i for i in range(start-1, end)]
+				else: values = [int(values)]
 				values.sort()
 			setattr(namespace, self.dest, values)
 	episodes_help = '''
@@ -124,8 +161,7 @@ def get_arguments():
 					or as start-end.
 					Possible usage: --ep 1,2,3,6 or 
 									--ep 3-10 or 
-									--ep -200 or 
-									--ep 100-
+									--ep 200
 					'''
 	parser = argparse.ArgumentParser(description='A command line script to download videos from KissAnime')
 	parser.add_argument('-o', default=os.getcwd(), metavar='Download Folder')
@@ -142,10 +178,14 @@ def get_arguments():
 folder, url, quality, eps = get_arguments()
 folder, url = get_anime_name(folder, url)
 if not os.path.exists(folder): os.makedirs(folder)
+print(2)
 headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36','Accept-Encoding':'identity'}
 url_base = '{url.scheme}://{url.netloc}'.format(url=urlparse(url))
+print(url_base)
 page = bs(cfscrape.create_scraper().get(url).content,'lxml')
+print(1)
 urls = page.find('table', {'class': 'listing'}).find_all('a')
+print(len(urls))
 ret = []
 for a in reversed(urls):
 	if a['href'].startswith('http'):

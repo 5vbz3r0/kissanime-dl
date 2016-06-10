@@ -6,7 +6,7 @@ This script requires [`cfscrape`](https://github.com/Anorov/cloudflare-scrape) a
 Install using pip `pip install -U cfscrape beautifulsoup4`  
   
     
-Please download and install [`resumable-urlretrieve`](https://github.com/berdario/resumable-urlretrieve) to
+[Optional] Please download and install [`resumable-urlretrieve`](https://github.com/berdario/resumable-urlretrieve) to
 be able to continue download of partially downloaded files.
 
 

@@ -2,7 +2,7 @@
 **Command-line script to download videos from KissAnime**
   
   
-This script requires [`cfscrape`](https://github.com/Anorov/cloudflare-scrape) and BeautifulSoup4 to work.   
+This script requires [`cfscrape`](https://github.com/Anorov/cloudflare-scrape) and `BeautifulSoup4` to work.   
 Install using pip `pip install -U cfscrape beautifulsoup4`  
   
     

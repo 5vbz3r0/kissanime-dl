@@ -1,7 +1,7 @@
 # /*$vbZ3r0*/ #
 
 import re, os, sys, cfscrape, argparse, time
-from time import time
+import time
 from bs4 import BeautifulSoup as bs
 from base64 import b64decode
 from urllib.request import urlopen, URLopener
@@ -67,27 +67,40 @@ def download_episode(url, title, folder, quality):
 		filename = file
 
 def dlProgress(count, blockSize, totalSize):
+	global init_count
+	global time_history
 	try:
 		time_history.append(time.monotonic())
 	except:
-		time_history = []
+		time_history = [time.monotonic()]
+	try:
+		init_count
+	except NameError:
+		init_count = count
 	percent = count*blockSize*100/totalSize
 	if totalSize-count*blockSize <= 40000:
 		percent = 100
-	if count > 0:
-		_count = 10 if count > 10 else count
-		# speed = blockSize*_count / sum(time_history[-_count])
-	else: speed = 0
-	n = int(percent//4)
 	dl, dlu = unitsize(count*blockSize)
 	tdl, tdlu = unitsize(totalSize)
-	# speed, speedu = unitsize(speed, True)
-	# try:
-	# 	eta = format_time((totalSize-blockSize*(count+1))//speed)
-	# except:
-	# 	eta = '>1 day'
+	count -= init_count
+	if count > 0:
+		n = 1000
+		_count = n if count > n else count
+		time_history = time_history[-_count:]
+		time_diff = [i-j for i,j in zip(time_history[1:],time_history[:-1])]
+		try:
+			speed = blockSize*_count / sum(time_diff)
+		except:
+			speed = 0
+	else: speed = 0
+	n = int(percent//4)
+	try:
+		eta = format_time((totalSize-blockSize*(count+init_count+1))//speed)
+	except:
+		eta = '>1 day'
+	speed, speedu = unitsize(speed, True)
 	l = len(tdl)-len(dl)
-	sys.stdout.write("\r" + "   {:.2f}".format(percent) + "% |" + "#"*n + " "*(25-n) + "| " + " "*(l+1) + dl + dlu  + "/" + tdl + tdlu)
+	sys.stdout.write("\r" + "   {:.2f}".format(percent) + "% |" + "#"*n + " "*(25-n) + "| " + " "*(l+1) + dl + dlu  + "/" + tdl + tdlu + speed + speedu + " " + eta)
 	sys.stdout.flush()
 
 def unitsize(size, speed=False):

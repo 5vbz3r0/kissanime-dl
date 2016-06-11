@@ -76,16 +76,16 @@ def dlProgress(count, blockSize, totalSize):
 		percent = 100
 	if count > 0:
 		_count = 10 if count > 10 else count
-		speed = blockSize*_count / sum(time_history[-_count])
+		# speed = blockSize*_count / sum(time_history[-_count])
 	else: speed = 0
 	n = int(percent//4)
 	dl, dlu = unitsize(count*blockSize)
 	tdl, tdlu = unitsize(totalSize)
-	speed, speedu = unitsize(speed, True)
-	try:
-		eta = format_time((totalSize-blockSize*(count+1))//speed)
-	except:
-		eta = '>1 day'
+	# speed, speedu = unitsize(speed, True)
+	# try:
+	# 	eta = format_time((totalSize-blockSize*(count+1))//speed)
+	# except:
+	# 	eta = '>1 day'
 	l = len(tdl)-len(dl)
 	sys.stdout.write("\r" + "   {:.2f}".format(percent) + "% |" + "#"*n + " "*(25-n) + "| " + " "*(l+1) + dl + dlu  + "/" + tdl + tdlu)
 	sys.stdout.flush()
@@ -166,7 +166,7 @@ def get_arguments():
 	parser = argparse.ArgumentParser(description='A command line script to download videos from KissAnime')
 	parser.add_argument('-o', default=os.getcwd(), metavar='Download Folder')
 	parser.add_argument('--quality', choices=['1080p', '720p', '360p'], default='1080p')
-	parser.add_argument('--eps', default='~1', help=episodes_help, type=str, action=join)
+	parser.add_argument('--eps', default=[-1], help=episodes_help, type=str, action=join)
 	parser.add_argument('url', nargs=argparse.REMAINDER, action=join, help='URL/Anime name')
 	args = parser.parse_args()
 	if args.url is '':
@@ -178,14 +178,10 @@ def get_arguments():
 folder, url, quality, eps = get_arguments()
 folder, url = get_anime_name(folder, url)
 if not os.path.exists(folder): os.makedirs(folder)
-print(2)
 headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36','Accept-Encoding':'identity'}
 url_base = '{url.scheme}://{url.netloc}'.format(url=urlparse(url))
-print(url_base)
 page = bs(cfscrape.create_scraper().get(url).content,'lxml')
-print(1)
 urls = page.find('table', {'class': 'listing'}).find_all('a')
-print(len(urls))
 ret = []
 for a in reversed(urls):
 	if a['href'].startswith('http'):

@@ -153,7 +153,7 @@ def get_arguments():
 				elif '-' in values:
 					start, end = [i for i in map(int, values.split('-'))]
 					values = [i for i in range(start-1, end)]
-				else: values = [int(values)]
+				else: values = [int(values)-1]
 				values.sort()
 			setattr(namespace, self.dest, values)
 	episodes_help = '''

@@ -6,11 +6,11 @@ This script requires [`cfscrape`](https://github.com/Anorov/cloudflare-scrape) a
 Install using pip `pip install -U cfscrape beautifulsoup4`  
   
     
-[Optional] Please download and install [`resumable-urlretrieve`](https://github.com/berdario/resumable-urlretrieve) to
+**[Optional]** Please download and install [`resumable-urlretrieve`](https://github.com/berdario/resumable-urlretrieve) to
 be able to continue download of partially downloaded files.
 
 
-**USAGE:**
+##USAGE:
 `kissanimedl.py [-o DL_LOCATION] [--quality DL_QUALITY] [--eps EPISODES] URL`  
 where  
 `DL_LOCATION` is where you want the file to be downloaded  
@@ -18,3 +18,5 @@ where
 `EPISODES` is of the format `start-end`, or `list,of,episodes,to,be,downloaded`, or `episode_number`  
 `URL` is either the `url_of_the_anime's_page_in_KissAnime` or `the_anime's_name_as_it_appears_in_KissAnime`
 
+**ToDo:**
+* Remove dependency on `urllib`, and thus `resumable`

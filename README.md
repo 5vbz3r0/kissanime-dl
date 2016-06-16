@@ -19,4 +19,5 @@ where
 `URL` is either the `url_of_the_anime's_page_in_KissAnime` or `the_anime's_name_as_it_appears_in_KissAnime`
 
 **ToDo:**
-* Remove dependency on `urllib`, and thus `resumable`
+* Remove dependency on `urllib`, and thus `resumable-urlretrieve`
+* Add multi-threaded downloading to increase download speed

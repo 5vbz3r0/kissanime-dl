@@ -43,7 +43,7 @@ def download_episode(url, title, folder, quality):
 		surl = stream_url(url, title, quality)
 		while surl is not None:
 			try:
-				URLopener.version = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
+				URLopener.version = 'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
 				headers = urlretrieve(surl, filename=filename, reporthook=dlProgress)
 				print("\ndone\n")
 				os.rename(filename,file)
@@ -188,22 +188,25 @@ def get_arguments():
 		exit()
 	return args.o, args.url, args.quality, args.eps
 
-folder, url, quality, eps = get_arguments()
-folder, url = get_anime_name(folder, url)
-if not os.path.exists(folder): os.makedirs(folder)
-headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36','Accept-Encoding':'identity'}
-url_base = '{url.scheme}://{url.netloc}'.format(url=urlparse(url))
-page = bs(cfscrape.create_scraper().get(url).content,'lxml')
-urls = page.find('table', {'class': 'listing'}).find_all('a')
-ret = []
-for a in reversed(urls):
-	if a['href'].startswith('http'):
-		urlep = a['href']
-	else:
-		urlep = url_base + a['href']
-	ret.append((urlep, a.string.strip()))
-for i in eps:
-	u, title = ret[i]
-	download_episode(u, title, folder, quality)
+def get_episode_list(url):
+	url_base = '{url.scheme}://{url.netloc}'.format(url=urlparse(url))
+	page = bs(cfscrape.create_scraper().get(url).content,'lxml')
+	urls = page.find('table', {'class': 'listing'}).find_all('a')
+	ep_list = []
+	for a in reversed(urls):
+		urlep = a['href'] if a['href'].startswith('http') else url_base + a['href']
+		ep_list.append((urlep, a.string.strip()))
+	return ep_list
+	
 
-# implement dl speed, eta
+def main():
+	folder, url, quality, eps = get_arguments()
+	folder, url = get_anime_name(folder, url)
+	if not os.path.exists(folder): os.makedirs(folder)
+	ep_list = get_episode_list(url)
+	for i in eps:
+		u, title = ep_list[i]
+		download_episode(u, title, folder, quality)
+
+if __name__ == '__main__':
+	main()

@@ -233,7 +233,7 @@ def get_arguments():
 					'''
 	parser = argparse.ArgumentParser(description='A command line script to download videos from KissAnime')
 	parser.add_argument('-o', default=os.getcwd(), metavar='Download Folder')
-	parser.add_argument('--quality', choices=['1080p', '720p', '360p'], default='1080p')
+	parser.add_argument('--quality', choices=['1080p', '720p', '480p', '360p'], default='1080p')
 	parser.add_argument('--eps', default=[-1], help=episodes_help, type=str, action=join)
 	parser.add_argument('url', nargs=argparse.REMAINDER, action=join, help='URL/Anime name')
 	args = parser.parse_args()

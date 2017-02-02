@@ -1,6 +1,4 @@
 
-**Important: KissAnime site is down for a few days. This script will not work until the site is back up**
-
 # kissanime-dl
 **Command-line script to download videos from KissAnime**
   

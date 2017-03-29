@@ -9,9 +9,10 @@ Install using pip:
 `pip install -U cfscrape requests beautifulsoup4`  
   
 
-## USAGE:
-`kissanimedl.py [-o DL_LOCATION] [--quality DL_QUALITY] [--eps EPISODES] URL`  
+**USAGE:**  `kissanimedl.py [-o DL_LOCATION] [--quality DL_QUALITY] [--eps EPISODES] URL`  
+  
 where  
+  
 `DL_LOCATION` is where you want the file to be downloaded  
 `DL_QUALITY` is one of `1080p`, `720p`, `480p` and `360p`  
 `EPISODES` is of the format `start-end`, or `list,of,episodes,to,be,downloaded`, or `episode_number`  

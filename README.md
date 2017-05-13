@@ -1,3 +1,4 @@
+# Will not work till I update the code to work through the servers and decrypt the video url.
 
 # kissanime-dl
 **Command-line script to download videos from KissAnime**

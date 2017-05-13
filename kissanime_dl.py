@@ -197,7 +197,7 @@ def format_time(t):
 	return '>1 day  '
 
 def get_anime_name(download_location, anime_name):
-	url = "https://kissanime.to/Anime/"
+	url = "https://kissanime.ru/Anime/"
 	folder = download_location
 	if "kissanime" in anime_name:
 		url = anime_name
